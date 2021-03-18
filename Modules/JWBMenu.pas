@@ -92,6 +92,7 @@ type
     miCharacterMode: TMenuItem;
     miKanaMode: TMenuItem;
     miASCIIMode: TMenuItem;
+    miReadMode: TMenuItem;
     N19: TMenuItem;
     miDisplayReading: TMenuItem;
     miDisplayMeaning: TMenuItem;

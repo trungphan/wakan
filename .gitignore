@@ -74,6 +74,7 @@ Build/Output
 *.dic
 *.edc
 *.res
+*.tmp
 __recovery
 Release/annota*
 Release/user

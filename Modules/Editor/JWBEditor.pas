@@ -39,7 +39,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, Buttons, ImgList, ComCtrls, ToolWin, Actions, ActnList,
-  WakanPaintbox, JWBStrings, JWBDicSearch, JWBWakanText, JWBIO, JWBEditorHint;
+  WakanPaintbox, JWBStrings, JWBDicSearch, JWBWakanText, JWBIO, JWBEditorHint,
+  System.ImageList;
 
 //If enabled, support multithreaded translation
 {$DEFINE MTHREAD_SUPPORT}
@@ -179,6 +180,8 @@ type
     aExport: TAction;
     aCopyAs: TAction;
     aFullwidthLatin: TAction;
+    btnReadMode: TToolButton;
+    aReadMode: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -222,6 +225,7 @@ type
     procedure aKanjiModeExecute(Sender: TObject);
     procedure aKanaModeExecute(Sender: TObject);
     procedure aASCIIModeExecute(Sender: TObject);
+    procedure aReadModeExecute(Sender: TObject);
     procedure aDisplayReadingExecute(Sender: TObject);
     procedure aDisplayMeaningExecute(Sender: TObject);
     procedure aUseColorsExecute(Sender: TObject);
@@ -1498,11 +1502,14 @@ begin
   else
   if key=VK_DELETE then begin
     ResolveInsert();
-    if SourceCur <> SelectionStart then
-      DeleteSelection()
-    else
-      doc.DeleteCharacter(SourceCur.x, SourceCur.y);
-    InvalidateText;
+    if aReadMode.Checked <> True then
+    begin
+      if SourceCur <> SelectionStart then
+        DeleteSelection()
+      else
+        doc.DeleteCharacter(SourceCur.x, SourceCur.y);
+      InvalidateText;
+    end;
   end else begin
     IsMoveKey := false;
     //Shift also means other things such as katakana input, so ignore it for non-move keys:
@@ -1713,6 +1720,7 @@ begin
   aKanjiMode.Checked:=true;
   aKanaMode.Checked:=false;
   aASCIIMode.Checked:=false;
+  aReadMode.Checked:=false;
   ResolveInsert(false); //old buffer invalid
 end;
 
@@ -1721,12 +1729,23 @@ begin
   aKanaMode.Checked:=true;
   aKanjiMode.Checked:=false;
   aASCIIMode.Checked:=false;
+  aReadMode.Checked:=false;
   ResolveInsert(false); //old buffer invalid
 end;
 
 procedure TfEditor.aASCIIModeExecute(Sender: TObject);
 begin
   aASCIIMode.Checked:=true;
+  aReadMode.Checked:=false;
+  aKanaMode.Checked:=false;
+  aKanjiMode.Checked:=false;
+  ResolveInsert(false); //old buffer invalid
+end;
+
+procedure TfEditor.aReadModeExecute(Sender: TObject);
+begin
+  aReadMode.Checked:=true;
+  aASCIIMode.Checked:=false;
   aKanaMode.Checked:=false;
   aKanjiMode.Checked:=false;
   ResolveInsert(false); //old buffer invalid
@@ -3329,6 +3348,11 @@ begin
   case c of
    '[': begin NextSuggestion(false); exit; end;
    ']': begin NextSuggestion(true); exit; end;
+  end;
+
+  if aReadMode.Checked then
+  begin
+    exit;
   end;
 
   //If the old block is converted, start a new insert block

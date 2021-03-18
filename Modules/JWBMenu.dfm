@@ -1106,6 +1106,10 @@ object fMenu: TfMenu
         Action = fEditor.aASCIIMode
         RadioItem = True
       end
+      object miReadMode: TMenuItem
+        Action = fEditor.aReadMode
+        RadioItem = True
+      end
       object N19: TMenuItem
         Caption = '-'
       end
