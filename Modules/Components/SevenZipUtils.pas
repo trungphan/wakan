@@ -17,7 +17,7 @@ type
   protected
     FStream: TStream;
     FOwnsStream: boolean;
-    function Seek(Offset: Int64; SeekOrigin: Cardinal; NewPosition: PInt64): HRESULT; stdcall;
+    procedure Seek(Offset: Int64; SeekOrigin: Cardinal; NewPosition: PInt64); safecall;
   public
     constructor Create(AStream: TStream; AOwnsStream: boolean = false);
     destructor Destroy; override;
@@ -25,12 +25,12 @@ type
 
   TInStream = class(TIfStream, ISequentialInStream, IInStream)
   protected
-    function Read(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal): HRESULT; stdcall;
+    procedure Read(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal); safecall;
   end;
 
   TOutStream = class(TIfStream, ISequentialOutStream, IOutStream)
-    function Write(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal): HRESULT; stdcall;
-    function SetSize(NewSize: Int64): HRESULT; stdcall;
+    procedure Write(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal); safecall;
+    procedure SetSize(NewSize: Int64); safecall;
   end;
 
   TExtractFileCallback = class(TInterfacedObject, IArchiveExtractCallback)
@@ -42,10 +42,10 @@ type
     FOutStream: TOutStream;
     function GetStream(Index: Cardinal; out OutStream: ISequentialOutStream;
       askExtractMode: Cardinal): HRESULT; stdcall;
-    function PrepareOperation(askExtractMode: Cardinal): HRESULT; stdcall;
-    function SetOperationResult(resultEOperationResult: Integer): HRESULT; stdcall;
-    function SetTotal(Total: Int64): HRESULT; stdcall;
-    function SetCompleted(CompleteValue: PInt64): HRESULT; stdcall;
+    procedure PrepareOperation(askExtractMode: Cardinal); safecall;
+    procedure SetOperationResult(resultEOperationResult: Integer); safecall;
+    procedure SetTotal(Total: Int64); safecall;
+    procedure SetCompleted(CompleteValue: PInt64); safecall;
   end;
 
   TSevenZipArchive = class
@@ -127,37 +127,33 @@ begin
   inherited;
 end;
 
-function TIfStream.Seek(Offset: Int64; SeekOrigin: Cardinal; NewPosition: PInt64): HRESULT;
+procedure TIfStream.Seek(Offset: Int64; SeekOrigin: Cardinal; NewPosition: PInt64);
 var pos: int64;
 begin
   pos := FStream.Seek(Offset, SeekOrigin);
   if NewPosition <> nil then
     NewPosition^ := pos;
-  Result := S_OK;
 end;
 
-function TInStream.Read(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal): HRESULT;
+procedure TInStream.Read(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal);
 var sz: integer;
 begin
   sz := FStream.Read(Data^, Size);
   if ProcessedSize <> nil then
     ProcessedSize^ := sz;
-  Result := S_OK;
 end;
 
-function TOutStream.Write(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal): HRESULT; stdcall;
+procedure TOutStream.Write(Data: Pointer; Size: Cardinal; ProcessedSize: PCardinal);
 var sz: integer;
 begin
   sz := FStream.Write(Data^, Size);
   if ProcessedSize <> nil then
     ProcessedSize^ := sz;
-  Result := S_OK;
 end;
 
-function TOutStream.SetSize(NewSize: Int64): HRESULT; stdcall;
+procedure TOutStream.SetSize(NewSize: Int64);
 begin
   FStream.Size := NewSize;
-  Result := S_OK;
 end;
 
 destructor TExtractFileCallback.Destroy;
@@ -172,7 +168,7 @@ end;
 
 function TExtractFileCallback.GetStream(Index: Cardinal;
   out OutStream: ISequentialOutStream;
-  askExtractMode: Cardinal): HRESULT; stdcall;
+  askExtractMode: Cardinal): HRESULT;
 begin
   if FData = nil then
     FData := TMemoryStream.Create;
@@ -185,25 +181,21 @@ begin
   Result := S_OK;
 end;
 
-function TExtractFileCallback.PrepareOperation(askExtractMode: Cardinal): HRESULT; stdcall;
+procedure TExtractFileCallback.PrepareOperation(askExtractMode: Cardinal);
 begin
-  Result := S_OK;
 end;
 
-function TExtractFileCallback.SetOperationResult(resultEOperationResult: Integer): HRESULT; stdcall;
+procedure TExtractFileCallback.SetOperationResult(resultEOperationResult: Integer);
 begin
   OpResult := resultEOperationResult;
-  Result := S_OK;
 end;
 
-function TExtractFileCallback.SetTotal(Total: Int64): HRESULT; stdcall;
+procedure TExtractFileCallback.SetTotal(Total: Int64);
 begin
-  Result := S_OK;
 end;
 
-function TExtractFileCallback.SetCompleted(CompleteValue: PInt64): HRESULT; stdcall;
+procedure TExtractFileCallback.SetCompleted(CompleteValue: PInt64);
 begin
-  Result := S_OK;
 end;
 
 
@@ -259,21 +251,16 @@ begin
 end;
 
 function TSevenZipArchive.NumberOfItems: cardinal;
-var hr: HRESULT;
 begin
-  hr := FArchive.GetNumberOfItems(@Result);
-  if FAILED(hr) then ZipFail(hr, 'GetNumberOfItems');
+  FArchive.GetNumberOfItems(Result);
 end;
 
 function TSevenZipArchive.BoolProperty(Index, PropID: cardinal): boolean;
-var hr: HRESULT;
-  val: PROPVARIANT;
+var val: PROPVARIANT;
   tmp: integer;
 begin
   PropVariantInit(@val);
-
-  hr := FArchive.GetProperty(Index, PropID, val);
-  if FAILED(hr) then ZipFail(hr, 'GetProperty('+IntToStr(Index)+', ' + IntToStr(PropId) + ')');
+  FArchive.GetProperty(Index, PropID, val);
 
   case val.vt of
     VT_EMPTY: Result := false;
@@ -289,14 +276,11 @@ begin
 end;
 
 function TSevenZipArchive.StrProperty(Index, PropID: cardinal): UnicodeString;
-var hr: HRESULT;
-  val: PROPVARIANT;
+var val: PROPVARIANT;
   tmp: integer;
 begin
   PropVariantInit(@val);
-
-  hr := FArchive.GetProperty(Index, PropID, val);
-  if FAILED(hr) then ZipFail(hr, 'GetProperty('+IntToStr(Index)+', ' + IntToStr(PropId) + ')');
+  FArchive.GetProperty(Index, PropID, val);
 
   case val.vt of
     VT_EMPTY: Result := '';
@@ -313,15 +297,13 @@ begin
 end;
 
 function TSevenZipArchive.ExtractFile(Index: cardinal): TMemoryStream;
-var hr: HRESULT;
-  Callback: TExtractFileCallback;
+var Callback: TExtractFileCallback;
 begin
   Result := nil;
   Callback := TExtractFileCallback.Create;
   (Callback as IInterface)._AddRef;
   try
-    hr := FArchive.Extract(@Index, 1, 0, Callback);
-    if FAILED(hr) then ZipFail(hr, 'Extract');
+    FArchive.Extract(@Index, 1, 0, Callback);
 
     if Callback.OpResult <> 0 then
       ZipFail('Cannot extract file, error '+IntToStr(Callback.OpResult))

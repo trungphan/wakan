@@ -70,12 +70,16 @@ type
 procedure TCustomGridHack.__GridRectToScreenRect(GridRect: TGridRect;
   var ScreenRect: TRect; IncludeLine: Boolean);
 begin
-  Self.GridRectToScreenRect(GridRect, ScreenRect, IncludeLine);
+  with Self do begin
+    GridRectToScreenRect(GridRect, ScreenRect, IncludeLine);
+  end;
 end;
 
 function TCustomGridHack.__GetSelection: TGridRect;
 begin
-  Result := Self.GetSelection;
+  with Self do begin
+    Result := GetSelection;
+  end;
 end;
 
 procedure TWakanGrid.Paint;

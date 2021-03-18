@@ -1,9 +1,20 @@
 ## PREREQUISITES
 
-1. Unicode Delphi (Delphi 2010+). Ansi support is being deprecated.
-2. Jp-tools (https://github.com/himselfv/jptools) which Wakan uses heavily.
-3. Inno Setup 5.
+1. Unicode Delphi (Delphi 10.3+ Community Edition). Ansi support is being deprecated.
+2. JEDI Code library and JEDI Visual Component library (https://github.com/project-jedi/jcl, https://github.com/project-jedi/jvcl)
+3.  Virtual-TreeView (https://github.com/JAM-Software/Virtual-TreeView)
+4. Jp-tools (https://github.com/himselfv/jptools) which Wakan uses heavily.
+5. Inno Setup 5.
 
+If encountering these errors:
+
+1. error F1026: File not found: 'fals e.dpr'
+
+Make sure value `DCC_DebugInformation` is set to 0 instead of false in the dproj Project files.
+
+2. error E2361: Cannot access private symbol
+
+Use `with Self begin ... end;` to access private symbol.
 
 ## BUILDING
 
@@ -55,25 +66,29 @@ Has to be done regularly to keep Wakan up to date:
 ## DEPENDENCIES
 
 In the recent versions Wakan can download some of these from the Download / Update components.
+See http://ftp.edrdg.org/pub/Nihongo/00INDEX.html where most of these files can be downloaded.
 
-1. UNICONV.exe - required for dictionary import.
-http://ringtail.its.monash.edu.au/pub/nihongo/uniconv.zip
-http://ringtail.its.monash.edu.au/pub/nihongo/uniconv.txt
+1. UNICONV.exe - required for dictionary import
+http://ftp.edrdg.org/pub/Nihongo/uniconv.zip.
 Also see: http://www.autohotkey.com/board/topic/9831-uniconv-convert-unicode-cmd/
 
 2. WORDFREQ_CK - required for adding frequency information to dictionaries
-http://ftp.monash.edu.au/pub/nihongo/00INDEX.html
-http://ftp.monash.edu.au/pub/nihongo/wordfreq_ck.gz
+http://ftp.edrdg.org/pub/Nihongo/wordfreq_ck.gz.
 Also see: http://code.google.com/p/wakan/issues/detail?id=66
 
 3. RADKFILE/RADKFILE2 - required for raine radicals search
-http://www.csse.monash.edu.au/~jwb/kradinf.html
+http://ftp.edrdg.org/pub/Nihongo/radkfile.gz.
 Download and place RADKFILE into Wakan release folder. You can import RADKFILE2 manually, but it's not yet supported.
 
-4. 7z.dll -- 7zip library. Required for downloading packed dictionaries.
+4. 7z.dll - 7zip library. Required for downloading packed dictionaries.
 
 5. KANJIDIC - required for character data.
 
-6. Unihan folder - required for character data.
+6. Unihan folder - required for character data https://www.unicode.org/Public/UNIDATA/Unihan.zip. See https://unicode.org/charts/unihan.html.
 
-7. EDICT2 - required for dictionary data (Wakan will work without it, but installer requires it).
+7. EDICT2 - required for dictionary data (Wakan will work without it, but installer requires it)
+http://ftp.edrdg.org/pub/Nihongo/edict2.gz.
+
+8. ccedict.dic
+
+9. examples_j.pkg

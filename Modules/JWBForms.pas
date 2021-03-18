@@ -140,10 +140,12 @@ type
 procedure TComponentHack.SetCsLoading(Value: boolean);
 var i: integer;
 begin
-  if Value then
-    Self.FComponentState := Self.FComponentState + [csLoading]
-  else
-    Self.FComponentState := Self.FComponentState - [csLoading];
+  with Self do begin
+    if Value then
+      FComponentState := FComponentState + [csLoading]
+    else
+      FComponentState := FComponentState - [csLoading];
+  end;
   for i := 0 to Self.ComponentCount-1 do
     if Self.Components[i] is TControl then
       TControl(Self.Components[i]).SetCsLoading(Value);

@@ -111,7 +111,7 @@ begin
   RegisterComponents('Wakan', [TRangeSpinEdit]);
 end;
 
-{$R 'RangeSpin'}
+{$R RangeSpin.res RangeSpin.rc}
 
 constructor TRangeEdit.Create(AOwner: TComponent);
 begin
