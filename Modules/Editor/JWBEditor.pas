@@ -2900,8 +2900,8 @@ begin
               end;
               if showroma then
               begin
-                DrawUnicode(canvas,realx+r.Left,realy+r.Top-1,rs,fcopy(kanaq,1,2),Self.FontName);
-                fdelete(kanaq,1,2);
+                DrawUnicode(canvas,realx+r.Left,realy+r.Top-1,rs,kanaq,GetRomaFont);
+                kanaq:='';  // TODO: check where this change would break
               end else
               begin
                 DrawUnicode(canvas,realx+r.Left,realy+r.Top-1,rs,fcopy(kanaq,1,1),Self.FontName);
