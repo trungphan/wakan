@@ -333,6 +333,20 @@ object fEditor: TfEditor
       OnKeyPress = ListBox1KeyPress
       OnKeyUp = ListBox1KeyUp
     end
+    object ToolButton2: TToolButton
+      Left = 577
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton2'
+      ImageIndex = 16
+      Style = tbsSeparator
+    end
+    object btnWatchClipboard: TToolButton
+      Left = 585
+      Top = 0
+      Action = aWatchClipboard
+      Style = tbsTextButton
+    end
   end
   object EditorPaintbox: TWakanPaintbox
     Left = 0
@@ -1240,6 +1254,10 @@ object fEditor: TfEditor
       Category = 'View'
       Caption = '#00297^eLarge'
       OnExecute = aLargeFontExecute
+    end
+    object aWatchClipboard: TAction
+      Caption = 'Watch clipboard'
+      OnExecute = aWatchClipboardExecute
     end
   end
 end

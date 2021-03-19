@@ -182,6 +182,8 @@ type
     aFullwidthLatin: TAction;
     btnReadMode: TToolButton;
     aReadMode: TAction;
+    btnWatchClipboard: TToolButton;
+    aWatchClipboard: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -237,9 +239,11 @@ type
     procedure aSmallFontExecute(Sender: TObject);
     procedure aMedFontExecute(Sender: TObject);
     procedure aLargeFontExecute(Sender: TObject);
+    procedure aWatchClipboardExecute(Sender: TObject);
     procedure ListBox1KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EditorPaintboxMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure ClipboardChanged(Sender: TObject);
 
   public
     procedure LanguageChanging;
@@ -794,6 +798,7 @@ begin
   ShowText(true);
   ListBox1.ItemIndex:=0;
   ListBox1.SetFocus;
+  Clipboard.Watchers.Add(Self.ClipboardChanged);
 end;
 
 procedure TfEditor.FormHide(Sender: TObject);
@@ -821,6 +826,17 @@ end;
 procedure TfEditor.FormDeactivate(Sender: TObject);
 begin
   if fEditorHint.Visible then HideHint;
+end;
+
+procedure TfEditor.ClipboardChanged(Sender: TObject);
+begin
+  if aWatchClipboard.Checked then
+  begin
+    SourceCur := SourcePos(0, 0);
+    doc.Clear;
+    PasteOp;
+    SetViewPos(SourcePos(0, 0));
+  end;
 end;
 
 procedure TfEditor.LanguageChanging;
@@ -1749,6 +1765,11 @@ begin
   aKanaMode.Checked:=false;
   aKanjiMode.Checked:=false;
   ResolveInsert(false); //old buffer invalid
+end;
+
+procedure TfEditor.aWatchClipboardExecute(Sender: TObject);
+begin
+  aWatchClipboard.Checked:=not aWatchClipboard.Checked;
 end;
 
 { These are auto-check allow-all-up buttons so they handle Down/Undown automatically }
