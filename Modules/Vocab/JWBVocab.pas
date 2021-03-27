@@ -1,4 +1,4 @@
-unit JWBVocab;
+﻿unit JWBVocab;
 
 interface
 
@@ -575,7 +575,7 @@ begin
     writeln(t,'; created by '+WakanAppName+' '+WakanCopyright);
     writeln(t,'; This file lists words that were exported from user vocabulary.');
     writeln(t,'; Each entry consists of four lines:');
-    writeln(t,'; Written (Unicode in hex), Phonetic (Unicode in hex), English (raw text), Category (raw text)');
+    writeln(t,'; Written (Unicode in hex), Phonetic (Unicode in hex), English (Unicode in hex), Category (raw text)');
     writeln(t,'');
     sl:=TStringList.Create;
     for i:=0 to wl.Count-1 do
@@ -587,7 +587,7 @@ begin
       begin
         writeln(t,fstrtohex(TUser.Str(TUserKanji)));
         writeln(t,fstrtohex(TUser.Str(TUserPhonetic)));
-        writeln(t,TUser.Str(TUserEnglish));
+        writeln(t,fstrtohex(TUser.Str(TUserEnglish)));
         TUserCat.Locate('Name',curlang+'~'+fVocabFilters.lbCategories.Items[j]);
         writeln(t,chr(TUserCat.Int(TUserCatType))+TUserCat.Str(TUserCatName));
       end;
@@ -670,7 +670,7 @@ begin
           else
             conv.Write(fstr(DbKanaToRomaji(TUser.Str(TUserPhonetic),'j')));
         conv.Write(fstr(#9));
-        conv.Write(fstr(repl(TUser.Str(TUserEnglish),';',',')));
+        conv.Write(repl(TUser.Str(TUserEnglish),';',','));
         if FExportType<2 then
         begin
           conv.Write(fstr(#9));
@@ -1061,7 +1061,7 @@ begin
     begin
       wn:=strtoint(fVocab.wl[(pagenum-1)*pr*c+i+j*pr]);
       TUser.Locate('Index',wn);
-      tm:=fstr(remmark(TUser.Str(TUserEnglish)));
+      tm:=remmark(TUser.Str(TUserEnglish));
       tk:=TUser.Str(TUserPhonetic);
       tr:=fstr(KanaToRomaji(TUser.Str(TUserPhonetic),curlang));
       if showroma then

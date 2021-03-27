@@ -27,7 +27,7 @@ var
 
   TUser: TTextTable;
   TUserIndex, //i
-  TUserEnglish, //s
+  TUserEnglish, //x
   TUserPhonetic, //x
   TUserPhoneticSort, //s -- that's not the same as dictionary's "sort", it
     //contains the results of GetPhoneticSortStr which can be string-numeric
@@ -133,7 +133,7 @@ begin
   writeln(t,'$PREBUFFER');
   writeln(t,'$FIELDS');
   writeln(t,'iIndex');
-  writeln(t,'sEnglish');
+  writeln(t,'xEnglish');
   writeln(t,'xPhonetic');
   writeln(t,'sPhoneticSort');
   writeln(t,'xKanji');

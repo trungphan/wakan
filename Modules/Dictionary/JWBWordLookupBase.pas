@@ -539,7 +539,7 @@ begin
   tmp := curmeaning;
   if pos(' >> ',tmp)>0 then delete(tmp,1,pos(' >> ',tmp)+3);
   tmp:=UnfixVocabEntry(tmp); //replace markup symbols with user readable
-  if not IsPositiveResult(fVocabAdd.ModalAddFixed(curkanji,curphonetic,fstr(tmp))) then
+  if not IsPositiveResult(fVocabAdd.ModalAddFixed(curkanji,curphonetic,tmp)) then
     exit;
   Self.Refresh;
 end;
